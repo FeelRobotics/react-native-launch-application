@@ -1,7 +1,7 @@
 
 # react-native-launch-application [![npm version](https://img.shields.io/npm/v/react-native-launch-application.svg)](https://www.npmjs.com/package/react-native-launch-application)
 
-this is a react-native library for launching the application when the application is closed . 
+this is a react-native library for launching the application when the application is closed .
 usually we can use this in headless js . (like fcm background messaging and etc)
 ## Getting started
 
@@ -43,9 +43,12 @@ import SajjadLaunchApplication from 'react-native-launch-application';
 import type {RemoteMessage} from 'react-native-firebase';
 
 
-//PackageName Must Be String For example "com.domain.application"
 export default async (message: RemoteMessage) => {
-    SajjadLaunchApplication.open(PackageName);
+  const extraData = {a: 1};
+  SajjadLaunchApplication.open(extraData);
 }
 
+// Read launch parameter from the app
+const extraData = await SajjadLaunchApplication.getLaunchParameters();
 
+````

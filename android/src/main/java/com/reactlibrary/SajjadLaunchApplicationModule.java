@@ -7,15 +7,22 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.view.WindowManager;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.WritableMap;
 
 import static android.content.Context.POWER_SERVICE;
 
 public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
+  private ReadableMap data = null;
 
   public SajjadLaunchApplicationModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -28,9 +35,14 @@ public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void open(String PackageName) {
-    PowerManager.WakeLock screenLock = ((PowerManager) getReactApplicationContext().getSystemService(POWER_SERVICE)).newWakeLock(
-            PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+  public void open(ReadableMap params) {
+    final String packageName = reactContext.getPackageName();
+    data = params;
+
+    PowerManager.WakeLock screenLock = ((PowerManager) getReactApplicationContext()
+            .getSystemService(POWER_SERVICE)).newWakeLock(
+            PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            "LAUNCHAPP:");
     screenLock.acquire();
 
     screenLock.release();
@@ -38,14 +50,23 @@ public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
     final KeyguardManager.KeyguardLock kl = km.newKeyguardLock("MyKeyguardLock");
     kl.disableKeyguard();
 
-  //  Intent dialogIntent = new Intent(getReactApplicationContext(), MainActivity.class);
-    Intent dialogIntent = getReactApplicationContext().getPackageManager().getLaunchIntentForPackage(PackageName);
+    Intent dialogIntent = getReactApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
 
     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     dialogIntent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED +
             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD +
-            //      WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON +
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     getReactApplicationContext().startActivity(dialogIntent);
+  }
+
+  @ReactMethod
+  public void getLaunchParameters(final Promise promise) {
+      if (data == null) {
+          promise.resolve(null);
+          return;
+      }
+      WritableMap writableMap = Arguments.createMap();
+      writableMap.merge(data);
+      promise.resolve(writableMap);
   }
 }
