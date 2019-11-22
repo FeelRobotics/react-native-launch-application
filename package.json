@@ -6,8 +6,8 @@
     "name": "lvlrsajjad",
     "email": "lvlr.xaus@gmail.com"
   },
-  "version": "1.0.1",
-  "description": "launch react native application background",
+  "version": "1.0.2",
+  "description": "Launch react native application from the headless task",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +18,7 @@
     "react-native-launch-application",
     "react-native-launch-application-background"
   ],
-    "homepage": "https://github.com/lvlrSajjad/react-native-launch-application",
+  "homepage": "https://github.com/lvlrSajjad/react-native-launch-application",
 
   "author": {
     "name": "Sajjad Asadi",

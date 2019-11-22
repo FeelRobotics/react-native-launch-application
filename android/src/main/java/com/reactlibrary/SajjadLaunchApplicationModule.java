@@ -1,9 +1,11 @@
 
 package com.reactlibrary;
 
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.WindowManager;
 
@@ -22,7 +24,6 @@ import static android.content.Context.POWER_SERVICE;
 public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
-  private ReadableMap data = null;
 
   public SajjadLaunchApplicationModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -35,9 +36,8 @@ public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void open(ReadableMap params) {
+  public void open(String param) {
     final String packageName = reactContext.getPackageName();
-    data = params;
 
     PowerManager.WakeLock screenLock = ((PowerManager) getReactApplicationContext()
             .getSystemService(POWER_SERVICE)).newWakeLock(
@@ -56,23 +56,29 @@ public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
     dialogIntent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED +
             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD +
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+    Bundle b = new Bundle();
+    b.putString("param", param);
+    dialogIntent.putExtras(b);
     getReactApplicationContext().startActivity(dialogIntent);
   }
 
   @ReactMethod
   public void getLaunchParameters(final Promise promise) {
-      if (data == null) {
-          promise.resolve(null);
-          return;
-      }
-      WritableMap writableMap = Arguments.createMap();
-      writableMap.merge(data);
-      promise.resolve(writableMap);
+      final Activity activity = getCurrentActivity();
+      final Intent intent = activity.getIntent();
+      Bundle b = intent.getExtras();
+      String value = "";
+      if(b != null)
+          value = b.getString("param", "");
+      promise.resolve(value);
   }
 
-  @ReactMethod
-  public void clearLaunchParameters() {
-      data = null;
-  }
-
+    @ReactMethod
+    public void clearLaunchParameters() {
+        final Activity activity = getCurrentActivity();
+        final Intent intent = activity.getIntent();
+        Bundle b = new Bundle();
+        intent.putExtras(b);
+    }
 }
