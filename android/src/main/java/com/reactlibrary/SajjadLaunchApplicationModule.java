@@ -69,4 +69,10 @@ public class SajjadLaunchApplicationModule extends ReactContextBaseJavaModule {
       writableMap.merge(data);
       promise.resolve(writableMap);
   }
+
+  @ReactMethod
+  public void clearLaunchParameters() {
+      data = null;
+  }
+
 }

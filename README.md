@@ -40,15 +40,15 @@ You can use this library in headless js for example launching the application wh
 
 ```javascript
 import SajjadLaunchApplication from 'react-native-launch-application';
-import type {RemoteMessage} from 'react-native-firebase';
 
+// Launch the app and pass the given app launch parameters
+// Can be called from a headless task
+SajjadLaunchApplication.open({a: 1});
 
-export default async (message: RemoteMessage) => {
-  const extraData = {a: 1};
-  SajjadLaunchApplication.open(extraData);
-}
-
-// Read launch parameter from the app
+// Read app launch parameters
 const extraData = await SajjadLaunchApplication.getLaunchParameters();
+
+// Clear app launch parameters
+SajjadLaunchApplication.clearLaunchParameters();
 
 ````
